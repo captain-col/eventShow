@@ -1,0 +1,17 @@
+package eventShow
+
+use captEvent
+use captTrans
+use captChanInfo
+
+
+macro eventShow_linkopts " -L$(EVENTSHOWROOT)/$(eventShow_tag) "
+
+path_remove LD_LIBRARY_PATH "$(EVENTSHOWROOT)"
+path_prepend LD_LIBRARY_PATH "$(EVENTSHOWROOT)/$(eventShow_tag)"
+
+path_remove PATH "$(EVENTSHOWROOT)"
+path_prepend PATH "$(EVENTSHOWROOT)/$(eventShow_tag)"
+
+application eventShow ../app/eventShow.cxx
+
