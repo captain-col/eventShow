@@ -22,9 +22,17 @@
 #include <TPad.h>
 #include <TStyle.h>
 #include <TColor.h>
+#include <sstream>
 
-
-
+namespace
+{
+  std::string toString(int i)
+  {
+    std::ostringstream s;
+    s << i;
+    return s.str();
+  }
+}
 
 class TEventShow: public CP::TEventLoopFunction {
 public:
@@ -33,19 +41,20 @@ public:
   void Initialize() {
     }
   bool operator () (CP::TEvent& event) {
-
+    
     int eventN = event.GetEventId();
+    int runN = event.GetRunId();
       
     CP::TChannelInfo::Get().SetContext(event.GetContext());
     
     CP::THandle<CP::TDigitContainer> drift= event.Get<CP::TDigitContainer>("~/digits/drift");
-    
     
         if (!drift)
 	  {
             CaptLog("No drift signals for this event " << event.GetContext());
             return false;
 	  }
+
 
 	
 	int signalEnd = -1E+6;
@@ -97,7 +106,7 @@ public:
 	      }
 	  }
         xPlane->Draw(drawOption.c_str());
-	std::string planeNameX = "xplane_even_"+std::to_string(eventN)+".png";
+	std::string planeNameX = "xplane_event#_"+toString(eventN)+"_run#_"+toString(runN)+".png";
 	gPad->Print(planeNameX.c_str());
 	// gPad->Print("plane.pdf(");
 	
@@ -128,7 +137,7 @@ public:
 	  }
         uPlane->Draw(drawOption.c_str());
 	// gPad->Print("plane.pdf");
-	std::string planeNameU = "uplane_even_"+std::to_string(eventN)+".png";
+	std::string planeNameU = "uplane_event_"+toString(eventN)+"_run#_"+toString(runN)+".png";
 	gPad->Print(planeNameU.c_str());
 	
 	wireCount = CP::TGeometryInfo::Get().GetWireCount(2);
@@ -158,7 +167,7 @@ public:
 	  }
         vPlane->Draw(drawOption.c_str());
         //gPad->Print("plane.pdf)");
-	std::string planeNameV = "vplane_even_"+std::to_string(eventN)+".png";
+	std::string planeNameV = "vplane_event_"+toString(eventN)+"_run#_"+toString(runN)+".png";
 	gPad->Print(planeNameV.c_str());
 	
 	
