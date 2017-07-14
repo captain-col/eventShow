@@ -4,7 +4,8 @@
 #include <eventLoop.hxx>
 
 #include <TEventContext.hxx>
-
+#include <TDrawPlane.hxx>
+#include <TDrawPlane.cxx>
 #include <TEvent.hxx>
 #include <TDigitContainer.hxx>
 #include <TPulseDigit.hxx>
@@ -24,15 +25,7 @@
 #include <TColor.h>
 #include <sstream>
 
-namespace
-{
-  std::string toString(int i)
-  {
-    std::ostringstream s;
-    s << i;
-    return s.str();
-  }
-}
+
 
 class TEventShow: public CP::TEventLoopFunction {
 public:
@@ -73,111 +66,87 @@ public:
             if (!pulse) continue;
             signalStart = std::min(signalStart, pulse->GetFirstSample());
 	  }
-	
-        int center = (signalEnd+signalStart)/2;
-        int spread = 0.66*(signalEnd-signalStart);
-        
-        std::cout << signalStart<< " " << signalEnd<< " " << center<< " " << spread<< std::endl;
-        
-        gStyle->SetOptStat(false);
-        std::string drawOption("COLZ");
-	
-	int plane = 0;
+
+		int plane = 0;
 	
 	int wireCount = CP::TGeometryInfo::Get().GetWireCount(plane);
-	
-	TH2F* xPlane = new TH2F("xPlane", "Charge on the X wires",wireCount, 0, wireCount,2*spread,center-spread,center+spread);
-	xPlane->GetXaxis()->SetTitle("Wire");
-	xPlane->GetYaxis()->SetTitle("Sample");
-        for (CP::TDigitContainer::const_iterator d = drift->begin(); d != drift->end(); ++d)
-	  {
-            const CP::TPulseDigit* pulse = dynamic_cast<const CP::TPulseDigit*>(*d);
-            if (!pulse) continue;
-	    CP::TChannelId CId = pulse->GetChannelId();
-	    CP::TGeometryId id  = CP::TChannelInfo::Get().GetGeometry(CId); 
-	    double wire = CP::GeomId::Captain::GetWireNumber(id) + 0.5;
-	    
-	     if (CP::GeomId::Captain::GetWirePlane(id) != plane) continue;
-	     
-            for (std::size_t i = 0; i < pulse->GetSampleCount(); ++i)
-	      {
-		int tbin = pulse->GetFirstSample() + i;
-		xPlane->Fill(wire,tbin+0.5,pulse->GetSample(i)-2000.0);
-	      }
-	  }
-        xPlane->Draw(drawOption.c_str());
-	std::string planeNameX = "xplane_event#_"+toString(eventN)+"_run#_"+toString(runN)+".png";
-	gPad->Print(planeNameX.c_str());
-	// gPad->Print("plane.pdf(");
-	
-	
-	wireCount = CP::TGeometryInfo::Get().GetWireCount(1);
-
-	plane = 1;
-	
-	TH2F* uPlane = new TH2F("uPlane", "Charge on the U wires", wireCount, 0, wireCount,2*spread,center-spread,center+spread);
-	uPlane->GetXaxis()->SetTitle("Wire");
-	uPlane->GetYaxis()->SetTitle("Sample");
+              int center = (signalEnd+signalStart)/2;
+        int spread = 0.5*(signalEnd-signalStart);
         
-        for (CP::TDigitContainer::const_iterator d = drift->begin(); d != drift->end(); ++d)
-	  {
-            const CP::TPulseDigit* pulse = dynamic_cast<const CP::TPulseDigit*>(*d);
-            if (!pulse) continue;
-	    CP::TGeometryId id  = CP::TChannelInfo::Get().GetGeometry(pulse->GetChannelId());
- 
-	    double wire = CP::GeomId::Captain::GetWireNumber(id) + 0.5;
-	    
-	     if (CP::GeomId::Captain::GetWirePlane(id) != plane) continue;
-	     
-            for (std::size_t i = 0; i < pulse->GetSampleCount(); ++i)
-	      {
-                int tbin = pulse->GetFirstSample() + i;
-                uPlane->Fill(wire,tbin+0.5,pulse->GetSample(i)-2000.0);
-	      }
-	  }
-        uPlane->Draw(drawOption.c_str());
-	// gPad->Print("plane.pdf");
-	std::string planeNameU = "uplane_event_"+toString(eventN)+"_run#_"+toString(runN)+".png";
-	gPad->Print(planeNameU.c_str());
-	
-	wireCount = CP::TGeometryInfo::Get().GetWireCount(2);
+	if(maxSampleX==-9999)maxSampleX=center+spread;
+	if(minSampleX==-9999)minSampleX=center-spread;
+	if(minWireX==-9999)minWireX=0;
+	if(maxWireX==-9999)maxWireX=wireCount;
 
-	plane = 2;
-	
-	TH2F* vPlane = new TH2F("vPlane", "Charge on the V wires", wireCount, 0, wireCount,2*spread,center-spread,center+spread);
-	
-	vPlane->GetXaxis()->SetTitle("Wire");
-	vPlane->GetYaxis()->SetTitle("Sample");
-        for (CP::TDigitContainer::const_iterator d = drift->begin();d != drift->end(); ++d)
-	  {
-	    const CP::TPulseDigit* pulse = dynamic_cast<const CP::TPulseDigit*>(*d);
-	    if (!pulse) continue;
-	    
-	    CP::TGeometryId id  = CP::TChannelInfo::Get().GetGeometry(pulse->GetChannelId());
- 
-	    double wire = CP::GeomId::Captain::GetWireNumber(id) + 0.5;
+	std::cout<<"minS="<<minSampleX<<"; maxS="<<maxSampleX<<"; minWire="<<minWireX<<"; maxW="<<maxWireX<<std::endl;
+        
+        std::cout << signalStart<< " " << signalEnd<< " " << center<< " " << spread<< std::endl;
 
-	     if (CP::GeomId::Captain::GetWirePlane(id) != plane) continue;
-	    
-            for (std::size_t i = 0; i < pulse->GetSampleCount(); ++i)
-	      {
-                int tbin = pulse->GetFirstSample() + i;
-                vPlane->Fill(wire,tbin+0.5,pulse->GetSample(i)-2000.0);
-	      }
-	  }
-        vPlane->Draw(drawOption.c_str());
-        //gPad->Print("plane.pdf)");
-	std::string planeNameV = "vplane_event_"+toString(eventN)+"_run#_"+toString(runN)+".png";
-	gPad->Print(planeNameV.c_str());
-	
+
+	std::string planeNameX = "Xplane_event#_"+toString(eventN)+"_run#_"+toString(runN)+".png";
+	std::string planeNameU = "Uplane_event#_"+toString(eventN)+"_run#_"+toString(runN)+".png";
+	std::string planeNameV = "Vplane_event#_"+toString(eventN)+"_run#_"+toString(runN)+".png";
+	DrawPlane(drift,0,minSampleX,maxSampleX,minWireX,maxWireX,planeNameX);
+
+		 wireCount = CP::TGeometryInfo::Get().GetWireCount(1);
+             
+        
+	if(maxSampleU==-9999)maxSampleU=center+spread;
+	if(minSampleU==-9999)minSampleU=center-spread;
+	if(minWireU==-9999)minWireU=0;
+	if(maxWireU==-9999)maxWireU=wireCount;
+	DrawPlane(drift,1,minSampleU,maxSampleU,minWireU,maxWireU,planeNameU);
+
+	       wireCount = CP::TGeometryInfo::Get().GetWireCount(2);
+             
+        
+	if(maxSampleV==-9999)maxSampleV=center+spread;
+	if(minSampleV==-9999)minSampleV=center-spread;
+	if(minWireV==-9999)minWireV=0;
+	if(maxWireV==-9999)maxWireV=wireCount;
+	DrawPlane(drift,2,minSampleV,maxSampleV,minWireV,maxWireV,planeNameV);
+
+
 	
 	return true;
   }
   
   void Finalize(CP::TRootOutput * const output) {
   }
+
+  bool SetOption(std::string option, std::string value="")
+  {
+    if(option=="minSampleX" && value!="")
+      {
+	minSampleX=atoi(value.c_str());
+      }//else minSample=-9999;
+    if(option=="maxSampleX" && value!="")
+      {
+	maxSampleX=atoi(value.c_str());
+      }//else maxSample=-9999;
+    if(option=="minWireX" && value!="")
+      {
+	minWireX=atoi(value.c_str());
+      }//else minWire=-9999;
+    if(option=="maxWireX" && value!="")
+      {
+	maxWireX=atoi(value.c_str());
+      }//else maxWire=-9999;
+     return true;
+  }
 private:
-  
+  int minSampleX=-9999;
+  int maxSampleX=-9999;
+  int minWireX=-9999;
+  int maxWireX=-9999;
+  int minSampleU=-9999;
+  int maxSampleU=-9999;
+  int minWireU=-9999;
+  int maxWireU=-9999;
+  int minSampleV=-9999;
+  int maxSampleV=-9999;
+  int minWireV=-9999;
+  int maxWireV=-9999;
 };
 
 int main(int argc, char **argv) {
