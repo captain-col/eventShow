@@ -49,7 +49,19 @@ public:
 	  }
 
 
-	
+	int minSampleX=-9999;
+  int maxSampleX=-9999;
+  int minWireX=-9999;
+  int maxWireX=-9999;
+  int minSampleU=-9999;
+  int maxSampleU=-9999;
+  int minWireU=-9999;
+  int maxWireU=-9999;
+  int minSampleV=-9999;
+  int maxSampleV=-9999;
+  int minWireV=-9999;
+  int maxWireV=-9999;
+
 	int signalEnd = -1E+6;
         for (CP::TDigitContainer::const_iterator d = drift->begin(); d != drift->end(); ++d)
 	  {
@@ -114,7 +126,7 @@ public:
   void Finalize(CP::TRootOutput * const output) {
   }
 
-  bool SetOption(std::string option, std::string value="")
+ /* bool SetOption(std::string option, std::string value="")
   {
     if(option=="minSampleX" && value!="")
       {
@@ -133,9 +145,9 @@ public:
 	maxWireX=atoi(value.c_str());
       }//else maxWire=-9999;
      return true;
-  }
+  }*/
 private:
-  int minSampleX=-9999;
+ /* int minSampleX=-9999;
   int maxSampleX=-9999;
   int minWireX=-9999;
   int maxWireX=-9999;
@@ -146,7 +158,7 @@ private:
   int minSampleV=-9999;
   int maxSampleV=-9999;
   int minWireV=-9999;
-  int maxWireV=-9999;
+  int maxWireV=-9999;*/
 };
 
 int main(int argc, char **argv) {
