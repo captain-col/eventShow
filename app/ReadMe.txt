@@ -1,6 +1,22 @@
 command to run :
 
-eventShow.exe -G mCAPTAIN -tubdaq -n 1 -s 1 input_file.ubdaq.gz
+eventShow.exe -O Zoom -G mCAPTAIN -tubdaq -n 1 -s 1 input_file.ubdaq.gz
+
+-O Zoom Must be set to get proper picktures
+
+Options to set boundaries:
+-O minSampleX=
+-O maxSampleX=
+-O minWireX=
+-O maxWireX=
+-O minSampleU=
+-O maxSampleU=
+-O minWireU=
+-O maxWireU=
+-O minSampleV=
+-O maxSampleV=
+-O minWireV=
+-O maxWireV=
 
 -G must be used to upload geometry file
 

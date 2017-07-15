@@ -37,7 +37,9 @@ public:
     
     int eventN = event.GetEventId();
     int runN = event.GetRunId();
-      
+std::cout<<"!**********************************!"<<std::endl;
+std::cout<<"-O Zoom Optin Must be set to get proper picktures!"<<std::endl;
+std::cout<<"!**********************************!"<<std::endl;      
     CP::TChannelInfo::Get().SetContext(event.GetContext());
     
     CP::THandle<CP::TDigitContainer> drift= event.Get<CP::TDigitContainer>("~/digits/drift");
@@ -48,19 +50,6 @@ public:
             return false;
 	  }
 
-
-	int minSampleX=-9999;
-  int maxSampleX=-9999;
-  int minWireX=-9999;
-  int maxWireX=-9999;
-  int minSampleU=-9999;
-  int maxSampleU=-9999;
-  int minWireU=-9999;
-  int maxWireU=-9999;
-  int minSampleV=-9999;
-  int maxSampleV=-9999;
-  int minWireV=-9999;
-  int maxWireV=-9999;
 
 	int signalEnd = -1E+6;
         for (CP::TDigitContainer::const_iterator d = drift->begin(); d != drift->end(); ++d)
@@ -85,12 +74,12 @@ public:
               int center = (signalEnd+signalStart)/2;
         int spread = 0.5*(signalEnd-signalStart);
         
-	if(maxSampleX==-9999)maxSampleX=center+spread;
-	if(minSampleX==-9999)minSampleX=center-spread;
-	if(minWireX==-9999)minWireX=0;
-	if(maxWireX==-9999)maxWireX=wireCount;
+	if(!maxSX)maxSampleX=center+spread;
+	if(!minSX)minSampleX=center-spread;
+	if(!minWX)minWireX=0;
+	if(!maxWX)maxWireX=wireCount;
 
-	std::cout<<"minS="<<minSampleX<<"; maxS="<<maxSampleX<<"; minWire="<<minWireX<<"; maxW="<<maxWireX<<std::endl;
+	std::cout<<"minSX="<<minSampleX<<"; maxSX="<<maxSampleX<<"; minWireX="<<minWireX<<"; maxWX="<<maxWireX<<std::endl;
         
         std::cout << signalStart<< " " << signalEnd<< " " << center<< " " << spread<< std::endl;
 
@@ -103,19 +92,21 @@ public:
 		 wireCount = CP::TGeometryInfo::Get().GetWireCount(1);
              
         
-	if(maxSampleU==-9999)maxSampleU=center+spread;
-	if(minSampleU==-9999)minSampleU=center-spread;
-	if(minWireU==-9999)minWireU=0;
-	if(maxWireU==-9999)maxWireU=wireCount;
+	if(!maxSU)maxSampleU=center+spread;
+	if(!minSU)minSampleU=center-spread;
+	if(!minWU)minWireU=0;
+	if(!maxWU)maxWireU=wireCount;
+std::cout<<"minSU="<<minSampleU<<"; maxSU="<<maxSampleU<<"; minWireU="<<minWireU<<"; maxWU="<<maxWireU<<std::endl;
 	DrawPlane(drift,1,minSampleU,maxSampleU,minWireU,maxWireU,planeNameU);
 
 	       wireCount = CP::TGeometryInfo::Get().GetWireCount(2);
              
         
-	if(maxSampleV==-9999)maxSampleV=center+spread;
-	if(minSampleV==-9999)minSampleV=center-spread;
-	if(minWireV==-9999)minWireV=0;
-	if(maxWireV==-9999)maxWireV=wireCount;
+	if(!maxSV)maxSampleV=center+spread;
+	if(!minSV)minSampleV=center-spread;
+	if(!minWV)minWireV=0;
+	if(!maxWV)maxWireV=wireCount;
+std::cout<<"minV="<<minSampleV<<"; maxSV="<<maxSampleV<<"; minWireV="<<minWireV<<"; maxWV="<<maxWireV<<std::endl;
 	DrawPlane(drift,2,minSampleV,maxSampleV,minWireV,maxWireV,planeNameV);
 
 
@@ -126,39 +117,115 @@ public:
   void Finalize(CP::TRootOutput * const output) {
   }
 
- /* bool SetOption(std::string option, std::string value="")
+  bool SetOption(std::string option, std::string value="")
   {
-    if(option=="minSampleX" && value!="")
+	if(option=="Zoom")
       {
+	
+	minSX=false;
+	maxSX=false;
+	minWX=false;
+	maxWX=false;
+	minSU=false;
+	maxSU=false;
+	minWU=false;
+	maxWU=false;
+        minSV=false;
+        maxSV=false;
+        minWV=false;
+        maxWV=false;
+      }
+    else if(option=="minSampleX" && value!="")
+      {
+	minSX=1;
 	minSampleX=atoi(value.c_str());
-      }//else minSample=-9999;
-    if(option=="maxSampleX" && value!="")
+      }
+    else if(option=="maxSampleX" && value!="")
       {
+	maxSX=1;
 	maxSampleX=atoi(value.c_str());
-      }//else maxSample=-9999;
-    if(option=="minWireX" && value!="")
+      }
+    else if(option=="minWireX" && value!="")
       {
+	minWX=1;
 	minWireX=atoi(value.c_str());
-      }//else minWire=-9999;
-    if(option=="maxWireX" && value!="")
+      }
+    else if(option=="maxWireX" && value!="")
       {
+	maxWX=1;
 	maxWireX=atoi(value.c_str());
-      }//else maxWire=-9999;
+      }
+else if(option=="minSampleU" && value!="")
+      {
+        minSU=1;
+        minSampleU=atoi(value.c_str());
+      }
+    else if(option=="maxSampleU" && value!="")
+      {
+        maxSU=1;
+        maxSampleU=atoi(value.c_str());
+      }
+    else if(option=="minWireU" && value!="")
+      {
+        minWU=1;
+        minWireU=atoi(value.c_str());
+      }
+    else if(option=="maxWireU" && value!="")
+      {
+        maxWU=1;
+        maxWireU=atoi(value.c_str());
+      }
+else if(option=="minSampleV" && value!="")
+      {
+        minSV=1;
+        minSampleV=atoi(value.c_str());
+      }
+    else if(option=="maxSampleV" && value!="")
+      {
+        maxSV=1;
+        maxSampleV=atoi(value.c_str());
+      }
+    else if(option=="minWireV" && value!="")
+      {
+        minWV=1;
+        minWireV=atoi(value.c_str());
+      }
+    else if(option=="maxWireV" && value!="")
+      {
+        maxWV=1;
+        maxWireV=atoi(value.c_str());
+      }
+	else 
+	{
+	return false;
+	}
      return true;
-  }*/
+  }
 private:
- /* int minSampleX=-9999;
-  int maxSampleX=-9999;
-  int minWireX=-9999;
-  int maxWireX=-9999;
-  int minSampleU=-9999;
-  int maxSampleU=-9999;
-  int minWireU=-9999;
-  int maxWireU=-9999;
-  int minSampleV=-9999;
-  int maxSampleV=-9999;
-  int minWireV=-9999;
-  int maxWireV=-9999;*/
+  int minSampleX;
+	bool minSX; 
+ int maxSampleX;
+	bool maxSX;
+  int minWireX;
+	bool minWX;
+  int maxWireX;
+	bool maxWX;
+  int minSampleU;
+	bool minSU;
+  int maxSampleU;
+	bool maxSU;
+  int minWireU;
+	bool minWU;
+  int maxWireU;
+	bool maxWU;
+  int minSampleV;
+	bool minSV;
+  int maxSampleV;
+	bool maxSV;
+  int minWireV;
+	bool minWV;
+  int maxWireV;
+	bool maxWV;
 };
 
 int main(int argc, char **argv) {
