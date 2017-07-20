@@ -29,7 +29,20 @@
 
 class TEventShow: public CP::TEventLoopFunction {
 public:
-    TEventShow() {}
+    TEventShow() {
+	        minSX=false;
+        maxSX=false;
+        minWX=false;
+        maxWX=false;
+        minSU=false;
+        maxSU=false;
+        minWU=false;
+        maxWU=false;
+        minSV=false;
+        maxSV=false;
+        minWV=false;
+        maxWV=false;
+}
     virtual ~TEventShow() {}
   void Initialize() {
     }
@@ -37,9 +50,9 @@ public:
     
     int eventN = event.GetEventId();
     int runN = event.GetRunId();
-std::cout<<"!**********************************!"<<std::endl;
-std::cout<<"-O Zoom Optin Must be set to get proper picktures!"<<std::endl;
-std::cout<<"!**********************************!"<<std::endl;      
+//std::cout<<"!**********************************!"<<std::endl;
+//std::cout<<"-O Zoom Optin Must be set to get proper picktures!"<<std::endl;
+//std::cout<<"!**********************************!"<<std::endl;      
     CP::TChannelInfo::Get().SetContext(event.GetContext());
     
     CP::THandle<CP::TDigitContainer> drift= event.Get<CP::TDigitContainer>("~/digits/drift");
@@ -119,7 +132,7 @@ std::cout<<"minV="<<minSampleV<<"; maxSV="<<maxSampleV<<"; minWireV="<<minWireV<
 
   bool SetOption(std::string option, std::string value="")
   {
-	if(option=="Zoom")
+/*	if(option=="Zoom")
       {
 	
 	minSX=false;
@@ -134,8 +147,8 @@ std::cout<<"minV="<<minSampleV<<"; maxSV="<<maxSampleV<<"; minWireV="<<minWireV<
         maxSV=false;
         minWV=false;
         maxWV=false;
-      }
-    else if(option=="minSampleX" && value!="")
+      }*/
+    if(option=="minSampleX" && value!="")
       {
 	minSX=1;
 	minSampleX=atoi(value.c_str());

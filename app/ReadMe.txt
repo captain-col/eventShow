@@ -1,8 +1,6 @@
 command to run :
 
-eventShow.exe -O Zoom -G mCAPTAIN -tubdaq -n 1 -s 1 input_file.ubdaq.gz
-
--O Zoom Must be set to get proper picktures
+eventShow.exe -G mCAPTAIN -tubdaq -n 1 -s 1 input_file.ubdaq.gz
 
 Options to set boundaries:
 -O minSampleX=
