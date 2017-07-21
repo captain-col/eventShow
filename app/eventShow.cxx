@@ -3,6 +3,7 @@
 // Include to get Event Loop.
 #include <eventLoop.hxx>
 
+#include <ECore.hxx>
 #include <TEventContext.hxx>
 #include <TDrawPlane.hxx>
 #include <TDrawPlane.cxx>
@@ -45,9 +46,10 @@ public:
 }
     virtual ~TEventShow() {}
   void Initialize() {
-    }
+count=0; 
+   }
   bool operator () (CP::TEvent& event) {
-    
+ count++;   
     int eventN = event.GetEventId();
     int runN = event.GetRunId();
 //std::cout<<"!**********************************!"<<std::endl;
@@ -122,7 +124,17 @@ std::cout<<"minSU="<<minSampleU<<"; maxSU="<<maxSampleU<<"; minWireU="<<minWireU
 std::cout<<"minV="<<minSampleV<<"; maxSV="<<maxSampleV<<"; minWireV="<<minWireV<<"; maxWV="<<maxWireV<<std::endl;
 	DrawPlane(drift,2,minSampleV,maxSampleV,minWireV,maxWireV,planeNameV);
 
+if(count>39)
+{
+try
+{throw CP::ENextEventLoopFile();}
+catch(CP::ENextEventLoopFile& ex)
+{
+std::cout<<"number of events exided 40"<<std::endl;
+exit(1);
+}
 
+}
 	
 	return true;
   }
@@ -239,6 +251,7 @@ private:
 	bool minWV;
   int maxWireV;
 	bool maxWV;
+int count;
 };
 
 int main(int argc, char **argv) {

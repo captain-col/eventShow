@@ -142,6 +142,6 @@ if(plane==2)
 //	std::string planeNameX = "xplane_event#_"+toString(eventN)+"_run#_"+toString(runN)+".png";
 	gPad->Print(planeName.c_str());
 	// gPad->Print("plane.pdf(");
-	
+	delete xPlane;
 
 }
